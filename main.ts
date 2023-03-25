@@ -3,7 +3,7 @@ import {
   UpdateType,
 } from "https://deno.land/x/telegram_bot_api@0.4.0/mod.ts";
 import { DOMParser } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
-import { addTracksToPlaylist } from './sc.ts'
+import { addTrackToPlaylist } from './sc.ts'
 import { envs } from "./envs.ts";
 
 const getTrackId = async (url: string) => {
@@ -13,11 +13,11 @@ const getTrackId = async (url: string) => {
     const html = await res.text();
 
     const page = new DOMParser().parseFromString(html, 'text/html');
-    if (!page) return;
+    if (!page) throw new Error('Failed to parse track page');
     const trackId = page.querySelector('meta[property="twitter:app:url:iphone"]')?.getAttribute('content')?.split(':').pop();
-    return trackId;
+    return trackId ? Number(trackId): null
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return null;
   }
 };
@@ -25,14 +25,14 @@ const getTrackId = async (url: string) => {
 const getLinkFromChat = (text: string | undefined) => {
   if(!text) return undefined;
   const linkMatch = text.match(/https:\/\/on.soundcloud.com\/[a-zA-Z0-9-]+/g);
-  return linkMatch?.map(link => link);
+  return linkMatch?.map(link => link)[0];
 };
 
 const bot = new TelegramBot(envs.BOT_TOKEN);
 
 bot.on(UpdateType.Message, async ({ message }) => {
-  const scLinks = getLinkFromChat(message.text);
-  if(!scLinks) {
+  const scLink = getLinkFromChat(message.text);
+  if(!scLink) {
     await bot.sendMessage({
       chat_id: message.chat.id,
       text: `I couldn't find a SoundCloud link in your message. Please send me a link to a track or playlist on SoundCloud.`,
@@ -46,9 +46,8 @@ bot.on(UpdateType.Message, async ({ message }) => {
     text: `Hang on, this might take a few seconds...`,
   });
 
-  const trackIdsMaybe = await Promise.all(scLinks.map(link => getTrackId(link)));
-  const trackIds = trackIdsMaybe.map(Number).filter(Boolean) as number[];
-  if (!trackIds.length) {
+  const trackId = await getTrackId(scLink);
+  if (!trackId) {
     await bot.sendMessage({
       chat_id: message.chat.id,
       text: `I couldn't find a track id in the link. Please send me a link to a track on SoundCloud.`,
@@ -57,11 +56,11 @@ bot.on(UpdateType.Message, async ({ message }) => {
     return;
   }
 
-  const ok = await addTracksToPlaylist(trackIds);
-  if(!ok) {
+  const result = await addTrackToPlaylist(trackId);
+  if(result) {
     await bot.sendMessage({
       chat_id: message.chat.id,
-      text: `I couldn't add the track to the playlist. Please try again later.`,
+      text: `${result} ${envs.PLAYLIST_LINK}`
     })
     return;
   }
