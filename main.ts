@@ -28,7 +28,7 @@ const getLinkFromChat = (text: string | undefined) => {
   return linkMatch?.map(link => link);
 };
 
-const bot = new TelegramBot(envs.TOKEN);
+const bot = new TelegramBot(envs.BOT_TOKEN);
 
 bot.on(UpdateType.Message, async ({ message }) => {
   const scLinks = getLinkFromChat(message.text);
@@ -40,6 +40,11 @@ bot.on(UpdateType.Message, async ({ message }) => {
 
     return;
   }
+
+  await bot.sendMessage({
+    chat_id: message.chat.id,
+    text: `Hang on, this might take a few seconds...`,
+  });
 
   const trackIdsMaybe = await Promise.all(scLinks.map(link => getTrackId(link)));
   const trackIds = trackIdsMaybe.map(Number).filter(Boolean) as number[];
@@ -67,23 +72,18 @@ bot.on(UpdateType.Message, async ({ message }) => {
   });
 });
 
-bot.setWebhook({
-  url: `${envs.WEBHOOK_URL}/${envs.TOKEN}`,
-});
+// bot.setWebhook({
+//   url: `${envs.WEBHOOK_URL}/${envs.BOT_TOKEN}`,
+// });
+
+// bot.run({
+//   webhook: {
+//     pathname: `/${envs.BOT_TOKEN}`
+//   }
+// })
 
 bot.run({
-  webhook: {
-    pathname: `/${envs.TOKEN}`
-  }
-})
+  polling: true,
+});
 
-
-if (import.meta.main) {
-  const links = Deno.readTextFileSync('links.txt')?.split('\n') ?? [];
-  if (!links.length) throw new Error('No links found');
-
-  const trackIdsMaybe = await Promise.all(links.map(link => getTrackId(link)));
-  const trackIds = trackIdsMaybe.map(Number).filter(Boolean) as number[];
-  if (!trackIds.length) throw new Error('No track ids found');
-  await addTracksToPlaylist(trackIds);
-}
+console.log('Bot is running...')

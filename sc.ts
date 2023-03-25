@@ -2,7 +2,7 @@ import axios from 'npm:axios';
 import { envs } from './envs.ts';
 
 const BASE_URL = 'https://api-v2.soundcloud.com';
-const GET_PLAYLIST_URL = `https://api-v2.soundcloud.com/playlists/${envs.PLAYLIST_ID}?representation=full&client_id=${CLIENT_ID}`
+const GET_PLAYLIST_URL = `https://api-v2.soundcloud.com/playlists/${envs.PLAYLIST_ID}?representation=full&client_id=${envs.CLIENT_ID}`;
 const ADD_TO_PLAYLIST_URL = `${BASE_URL}/playlists/${envs.PLAYLIST_ID}?client_id=${envs.CLIENT_ID}&app_version=1678362857&app_locale=en`;
 
 export const addTracksToPlaylist = async (trackIDs: number[] | string[]) => {
@@ -21,7 +21,7 @@ export const addTracksToPlaylist = async (trackIDs: number[] | string[]) => {
       }
     }, {
       headers: {
-        Authorization: envs.AUTH
+        Authorization: envs.SC_AUTH_TOKEN
       }
     });
 
