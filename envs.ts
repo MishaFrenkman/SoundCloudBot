@@ -1,4 +1,4 @@
-import "https://deno.land/std/dotenv/load.ts";
+// import "https://deno.land/std/dotenv/load.ts";
 
 const CLIENT_ID = Deno.env.get('CLIENT_ID');
 if(!CLIENT_ID) throw new Error('CLIENT_ID is not provided');
