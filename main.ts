@@ -1,7 +1,7 @@
 import {
   TelegramBot,
   UpdateType,
-} from "https://deno.land/x/telegram_bot_api@0.4.0/mod.ts";
+} from "https://deno.land/x/telegram_bot_api@0.3.1/mod.ts";
 import { DOMParser } from "https://deno.land/x/deno_dom/deno-dom-wasm.ts";
 import { addTrackToPlaylist } from './sc.ts'
 import { envs } from "./envs.ts";
@@ -75,10 +75,8 @@ bot.setWebhook({
   url: `${envs.WEBHOOK_URL}/${envs.BOT_TOKEN}`,
 });
 
-//@ts-ignore
 bot.run({
   webhook: {
-    port: 80,
     pathname: `/${envs.BOT_TOKEN}`
   }
 })
