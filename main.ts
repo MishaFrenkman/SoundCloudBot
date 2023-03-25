@@ -72,18 +72,12 @@ bot.on(UpdateType.Message, async ({ message }) => {
   });
 });
 
-// bot.setWebhook({
-//   url: `${envs.WEBHOOK_URL}/${envs.BOT_TOKEN}`,
-// });
-
-// bot.run({
-//   webhook: {
-//     pathname: `/${envs.BOT_TOKEN}`
-//   }
-// })
-
-bot.run({
-  polling: true,
+bot.setWebhook({
+  url: `${envs.WEBHOOK_URL}/${envs.BOT_TOKEN}`,
 });
 
-console.log('Bot is running...')
+bot.run({
+  webhook: {
+    pathname: `/${envs.BOT_TOKEN}`
+  }
+})
