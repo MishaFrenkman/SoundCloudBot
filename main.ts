@@ -75,8 +75,10 @@ bot.setWebhook({
   url: `${envs.WEBHOOK_URL}/${envs.BOT_TOKEN}`,
 });
 
+//@ts-ignore
 bot.run({
   webhook: {
+    port: 80,
     pathname: `/${envs.BOT_TOKEN}`
   }
 })
