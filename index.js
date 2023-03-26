@@ -124,7 +124,7 @@ bot.telegram.setWebhook(`https://${envs.GOOGLE_CLOUD_REGION}-${envs.GOOGLE_CLOUD
 bot.on((0, import_filters.message)("text"), async (ctx) => {
   const scLink = getLinkFromChat(ctx.message?.text);
   if (!scLink) {
-    ctx.reply(`I couldn't find a SoundCloud link in your message. Please send me a link to a track or playlist on SoundCloud.`);
+    ctx.reply(`I couldn't find a SoundCloud link in your message. Please send me a link to a track on SoundCloud.`);
     return;
   }
   ctx.reply("Hang on, this might take a few seconds...");
