@@ -26,6 +26,7 @@ if (!GOOGLE_CLOUD_PROJECT_ID) throw new Error("GOOGLE_CLOUD_PROJECT_ID is not pr
 const GOOGLE_CLOUD_REGION = process.env.GOOGLE_CLOUD_REGION;
 if (!GOOGLE_CLOUD_REGION) throw new Error("GOOGLE_CLOUD_REGION is not provided");
 
+
 export const envs = {
   CLIENT_ID,
   PLAYLIST_ID,
@@ -33,4 +34,6 @@ export const envs = {
   SC_AUTH_TOKEN,
   BOT_TOKEN,
   WEBHOOK_URL,
+  GOOGLE_CLOUD_PROJECT_ID,
+  GOOGLE_CLOUD_REGION
 }
