@@ -20,6 +20,12 @@ if (!BOT_TOKEN) throw new Error("Bot token is not provided");
 const WEBHOOK_URL = process.env.WEBHOOK_URL;
 if (!WEBHOOK_URL) throw new Error("Webhook url is not provided");
 
+const GOOGLE_CLOUD_PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT_ID;
+if (!GOOGLE_CLOUD_PROJECT_ID) throw new Error("GOOGLE_CLOUD_PROJECT_ID is not provided");
+
+const GOOGLE_CLOUD_REGION = process.env.GOOGLE_CLOUD_REGION;
+if (!GOOGLE_CLOUD_REGION) throw new Error("GOOGLE_CLOUD_REGION is not provided");
+
 export const envs = {
   CLIENT_ID,
   PLAYLIST_ID,

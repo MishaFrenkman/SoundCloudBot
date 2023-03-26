@@ -1,4 +1,5 @@
-import TelegramBot from 'node-telegram-bot-api';
+import { Telegraf } from 'telegraf';
+import { message } from 'telegraf/filters';
 import { JSDOM } from 'jsdom';
 import { addTrackToPlaylist } from './sc'
 import { envs } from "./envs";
@@ -27,30 +28,35 @@ const getLinkFromChat = (text: string | undefined) => {
   return linkMatch?.map(link => link)[0];
 };
 
-const bot = new TelegramBot(envs.BOT_TOKEN);
-bot.setWebHook(`${envs.WEBHOOK_URL}/${envs.BOT_TOKEN}`);
+const bot = new Telegraf(envs.BOT_TOKEN);
+bot.telegram.setWebhook(`https://${GOOGLE_CLOUD_REGION}-${GOOGLE_CLOUD_PROJECT_ID}.cloudfunctions.net/${process.env.FUNCTION_TARGET}`);
 
-bot.on('message', async message => {
-  const chatId = message.chat.id;
-  const scLink = getLinkFromChat(message.text);
+bot.on(message('text'), async (ctx) => {
+  const scLink = getLinkFromChat(ctx.message?.text);
   if (!scLink) {
-    bot.sendMessage(chatId, `I couldn't find a SoundCloud link in your message. Please send me a link to a track or playlist on SoundCloud.`,);
+    ctx.reply(`I couldn't find a SoundCloud link in your message. Please send me a link to a track or playlist on SoundCloud.`);
     return;
   }
 
-  bot.sendMessage(chatId, `Hang on, this might take a few seconds...`);
+  ctx.reply('Hang on, this might take a few seconds...');
 
   const trackId = await getTrackId(scLink);
   if (!trackId) {
-    bot.sendMessage(chatId, `I couldn't find a track id in the link. Please send me a link to a track on SoundCloud.`);
+    ctx.reply("I couldn't find a track id in the link. Please send me a link to a track on SoundCloud.");
     return;
   }
 
   const result = await addTrackToPlaylist(trackId);
   if (result) {
-    bot.sendMessage(chatId, `${result} ${envs.PLAYLIST_LINK}`);
+    ctx.reply(`${result} ${envs.PLAYLIST_LINK}`);
     return;
   }
 
-  bot.sendMessage(chatId, `Thanks, I've added the track to the playlist! ${envs.PLAYLIST_LINK}`);
+  ctx.reply(`Thanks, I've added the track to the playlist! ${envs.PLAYLIST_LINK}`);
 });
+
+// bot.launch();
+
+// exports.telegramBotWebhook = (req: any, res: any) => {
+//   bot.handleUpdate(req.body, res);
+// };
