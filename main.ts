@@ -79,4 +79,4 @@ bot.run({
   webhook: {
     pathname: '/'
   }
-})
+});
