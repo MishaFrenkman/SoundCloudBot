@@ -29,7 +29,6 @@ const getLinkFromChat = (text: string | undefined) => {
 };
 
 const bot = new Telegraf(envs.BOT_TOKEN);
-bot.telegram.setWebhook(`https://${envs.GOOGLE_CLOUD_REGION}-${envs.GOOGLE_CLOUD_PROJECT_ID}.cloudfunctions.net/${process.env.FUNCTION_TARGET}`);
 
 bot.on(message('text'), async (ctx) => {
   const scLink = getLinkFromChat(ctx.message?.text);
@@ -56,6 +55,7 @@ bot.on(message('text'), async (ctx) => {
 });
 
 // bot.launch();
+bot.telegram.setWebhook(`https://${envs.GOOGLE_CLOUD_REGION}-${envs.GOOGLE_CLOUD_PROJECT_ID}.cloudfunctions.net/${process.env.FUNCTION_TARGET}`);
 
 exports.telegramBotWebhook = (req: any, res: any) => {
   bot.handleUpdate(req.body, res);
