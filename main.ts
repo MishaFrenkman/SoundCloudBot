@@ -72,11 +72,11 @@ bot.on(UpdateType.Message, async ({ message }) => {
 });
 
 bot.setWebhook({
-  url: `${envs.WEBHOOK_URL}/${envs.BOT_TOKEN}`,
+  url: `${envs.WEBHOOK_URL}`,
 });
 
 bot.run({
   webhook: {
-    pathname: `/${envs.BOT_TOKEN}`
+    pathname: '/'
   }
 })
