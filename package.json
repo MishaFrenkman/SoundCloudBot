@@ -6,6 +6,7 @@
   "author": "Michael Pomogajko <michael.pomogajko@pwc.com>",
   "license": "MIT",
   "scripts": {
+    "dev": "esno main.ts --watch",
     "build": "npx esbuild main.ts --outfile=index.js --bundle --platform=node --target=node18 --packages=external",
     "deploy": "gcloud beta functions deploy telegramBotWebhook --region=europe-west1 --env-vars-file .env.yaml --runtime nodejs14 --trigger-http"
   },
