@@ -1,4 +1,5 @@
-import { envs } from './envs.ts';
+import axios from 'axios';
+import { envs } from './envs';
 
 const BASE_URL = 'https://api-v2.soundcloud.com';
 const GET_PLAYLIST_URL = `https://api-v2.soundcloud.com/playlists/${envs.PLAYLIST_ID}?representation=full&client_id=${envs.CLIENT_ID}`;
@@ -6,7 +7,7 @@ const ADD_TO_PLAYLIST_URL = `${BASE_URL}/playlists/${envs.PLAYLIST_ID}?client_id
 
 export const addTrackToPlaylist = async (trackId: number) => {
   try {
-    const data = await fetch(GET_PLAYLIST_URL).then(res => res.json());
+    const { data } = await axios.get(GET_PLAYLIST_URL);
     const playlistTracks: number[] = data.tracks.map((track: any) => Number(track.id));
 
     if (playlistTracks.includes(trackId)) {
@@ -15,17 +16,14 @@ export const addTrackToPlaylist = async (trackId: number) => {
 
     const joinedTracks = [...playlistTracks, trackId];
 
-    await fetch(ADD_TO_PLAYLIST_URL, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': envs.SC_AUTH_TOKEN
-      },
-      body: JSON.stringify({
-        playlist: {
-          tracks: joinedTracks
-        }
-      })
+    await axios.put(ADD_TO_PLAYLIST_URL, {
+      playlist: {
+        tracks: joinedTracks
+      }
+    }, {
+      headers:{
+        Authorization: envs.SC_AUTH_TOKEN
+      }
     });
 
     return null;
